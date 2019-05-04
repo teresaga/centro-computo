@@ -19,6 +19,13 @@ import { ActividadesComponent } from './actividades/actividades.component';
 import { UsuariosComponent } from './usuarios/usuarios.component';
 
 import { GraficoDonaComponent } from "../components/grafico-dona/grafico-dona.component";
+import { SettingComponent } from './setting/setting.component';
+import { AddprestamoComponent } from './prestamos/addprestamo/addprestamo.component';
+import { AddusuarioComponent } from './usuarios/addusuario/addusuario.component';
+import { AddinventarioComponent } from './inventario/addinventario/addinventario.component';
+import { AddactividadComponent } from './actividades/addactividad/addactividad.component';
+import { ReactiveFormsModule, FormsModule } from "@angular/forms";
+import { CommonModule } from "@angular/common";
 
 @NgModule({
     declarations:[
@@ -30,6 +37,11 @@ import { GraficoDonaComponent } from "../components/grafico-dona/grafico-dona.co
         PrestamosComponent,
         ActividadesComponent,
         UsuariosComponent,
+        SettingComponent,
+        AddprestamoComponent,
+        AddusuarioComponent,
+        AddinventarioComponent,
+        AddactividadComponent,
     ],
     exports: [
         DashboardComponent,
@@ -38,7 +50,10 @@ import { GraficoDonaComponent } from "../components/grafico-dona/grafico-dona.co
     imports: [
         SharedModule,
         PAGES_ROUTES,
-        ChartsModule
+        ChartsModule,
+        FormsModule,
+        ReactiveFormsModule,
+        CommonModule
     ]
 })
 export class PagesModule {}

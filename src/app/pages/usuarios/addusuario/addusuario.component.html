@@ -1,0 +1,53 @@
+<div class="col-lg-6">
+    <div class="card">
+        <div class="card-header bg-info">
+            <h4 class="m-b-0 text-white">Registrar nuevo usuario</h4>
+        </div>
+
+        <div class="card-body">
+
+            <form ngNativeValidate [formGroup]="form" (ngSubmit)="registrar()" class="form p-t-20">
+                <div class="form-group">
+                    <label for="exampleInputuname2">Nombre de usuario</label>
+                    <div class="input-group">
+                        <input formControlName="nombre" name="nombre" type="text" class="form-control" required>
+                        <div class="input-group-addon"><i class="ti-user"></i></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputEmail2">Email</label>
+                    <div class="input-group">
+                        <input formControlName="correo" name="correo" type="email" class="form-control" required>
+                        <div class="input-group-addon"><i class="ti-email"></i></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputpwd2">Contraseña</label>
+                    <div class="input-group">
+                        <input formControlName="password" name="password" type="password" class="form-control" required>
+                        <div class="input-group-addon"><i class="ti-lock"></i></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputpwd3">Confirmar contraseña</label>
+                    <div class="input-group">
+                        <input formControlName="password2" name="password2" type="password" class="form-control" required>
+                        <div class="input-group-addon"><i class="ti-lock"></i></div>
+                    </div>
+                </div>
+
+                <div class="form-group" *ngIf="form.errors?.sonIguales && !form.pristine">
+                    <p class="text-danger">
+                        Las contraseñas deben de ser iguales
+                    </p>
+                </div>
+
+                <div class="text-left">
+                    <button type="submit" class="btn btn-success waves-effect waves-light m-r-10"><i class="fa fa-check"></i> Guardar</button>
+                    <button routerLink="/usuarios" type="submit" class="btn btn-inverse waves-effect waves-light">Cancel</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>

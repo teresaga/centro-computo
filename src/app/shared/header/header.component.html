@@ -13,14 +13,14 @@
                     <!-- Dark Logo icon -->
                     <img src="assets/images/logo-icon.png" alt="homepage" class="dark-logo" />
                     <!-- Light Logo icon -->
-                    <img src="assets/images/logo-light-icon.png" alt="homepage" class="light-logo" />
+                    <img src="assets/images/logo-light-icon3.png" alt="homepage" class="light-logo" />
                 </b>
                 <!--End Logo icon -->
                 <!-- Logo text --><span>
                   <!-- dark Logo text -->
                   <img src="assets/images/logo-text.png" alt="homepage" class="dark-logo" />
                   <!-- Light Logo text -->    
-                  <img src="assets/images/logo-light-text.png" class="light-logo" alt="homepage" /></span> </a>
+                  <img src="assets/images/text.png" class="light-logo" alt="homepage" /></span> </a>
         </div>
         <!-- ============================================================== -->
         <!-- End Logo -->
@@ -44,7 +44,7 @@
                 <!-- ============================================================== -->
                 <li class="nav-item hidden-xs-down search-box"> <a class="nav-link hidden-sm-down waves-effect waves-dark" href="javascript:void(0)"><i class="ti-search"></i></a>
                     <form class="app-search">
-                        <input type="text" class="form-control" placeholder="Search & enter"> <a class="srh-btn"><i class="ti-close"></i></a> </form>
+                        <input type="text" class="form-control" placeholder="Buscar..."> <a class="srh-btn"><i class="ti-close"></i></a> </form>
                 </li>
                 <!-- ============================================================== -->
                 <!-- Language -->
@@ -57,12 +57,12 @@
                 <!-- Profile -->
                 <!-- ============================================================== -->
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="assets/images/users/1.jpg" alt="user" class="profile-pic" /></a>
+                    <a class="nav-link dropdown-toggle waves-effect waves-dark" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user-circle fa-2x" style="margin-top:5px"> </i></a>
                     <div class="dropdown-menu dropdown-menu-right animated fadeIn">
                         <ul class="dropdown-user">
-                            <li><a href="#"><i class="ti-settings"></i> Configuración</a></li>
+                            <li><a routerLinkActive="active" routerLink="/setting"><i class="ti-settings"></i> Cambiar Contraseña</a></li>
                             <li role="separator" class="divider"></li>
-                            <li><a href="#"><i class="fa fa-power-off"></i> Cerrar Sesión</a></li>
+                            <li><a (click)="_usuarioService.logout()" class="pointer"><i class="fa fa-power-off"></i> Cerrar Sesión</a></li>
                         </ul>
                     </div>
                 </li>

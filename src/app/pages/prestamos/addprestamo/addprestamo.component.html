@@ -1,0 +1,83 @@
+
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header bg-info">
+                <h4 class="m-b-0 text-white">Registrar nuevo préstamo</h4>
+            </div>
+            <div class="card-body">
+                <form action="#">
+                    <div class="form-body">
+                        <div class="row p-t-20">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Ciclo Escolar</label>
+                                    <input type="text" id="ciclo" class="form-control">
+                                </div>
+                            </div>
+                            <!--/span-->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Nombre</label>
+                                    <input type="text" id="nombre" class="form-control">
+                                </div>
+                            </div>
+                            <!--/span-->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Cuenta</label>
+                                    <input type="text" id="cuenta" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <!--/row-->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Carrera</label>
+                                    <select class="form-control custom-select" data-placeholder="Seleccionar carrera" tabindex="1">
+                                        <option value="civil">ING. CIVIL</option>
+                                        <option value="geodesica">ING. GEODÉSICA</option>
+                                        <option value="software">ING. DE SOFTWARE</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Grupo</label>
+                                    <select class="form-control custom-select" data-placeholder="Seleccionar grupo" tabindex="1">
+                                        <option value="101">101</option>
+                                        <option value="102">102</option>
+                                        <option value="103">103</option>
+                                        <option value="201">201</option>
+                                        <option value="202">202</option>
+                                        <option value="203">203</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <!--/row-->
+                        <h3 class="box-title m-t-40">Préstamo</h3>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-12 ">
+                                <div class="form-group">
+                                    <label>Equipo</label>
+                                    <div class="input-group">
+                                        <select class="form-control custom-select" data-placeholder="Seleccionar equipo" tabindex="1">
+                                            <option value="proyector1">Proyector 1</option>
+                                            <option value="proyector2">Proyector 2</option>
+                                        </select>
+                                        <button class="btn btn-success"><i class="fa fa-plus"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success waves-effect waves-light m-r-10"> <i class="fa fa-check"></i> Guardar</button>
+                        <button routerLink="/prestamos" type="button" class="btn btn-inverse waves-effect waves-light">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
