@@ -76,6 +76,14 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; }
 
+.status {
+  font-size: 60px;
+  margin: 2px 2px 5px 0;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 10px;
+}
+
 a:hover,
 a:focus {
   text-decoration: none; }

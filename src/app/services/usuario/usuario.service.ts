@@ -101,6 +101,26 @@ export class UsuarioService {
                     
   }
 
+  editarUsuario( usuario: Usuario ) {
+
+    let url = URL_SERVICIOS + '/usuario/password/' + this.usuario._id;
+    url += '?token=' + this.token;
+
+    return this.http.put( url, usuario )
+              .pipe( 
+                    map((resp: any) => {
+
+                      swal('Usuario actualizado', usuario.nombre, 'success');
+                      return resp.usuario;
+
+                    }),
+                    catchError( err => {
+                      swal(err.error.mensaje, err.error.errors.message, 'error');
+                      return throwError( err );
+                    })
+                );
+  }
+
   cargarUsuarios( desde: number = 0 ){
     let url = URL_SERVICIOS + '/usuario?desde=' + desde;
 

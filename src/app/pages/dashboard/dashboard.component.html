@@ -3,10 +3,10 @@
       <div class="card bg-info">
           <div class="card-body">
               <div class="d-flex no-block">
-                  <div class="m-r-20 align-self-center"><img style="width: 50px; height: 50px;" src="../assets/images/icon/paste-icon.png" alt="Actividades"></div>
+                  <div class="m-r-20 align-self-center"><img style="width: 50px; height: 50px;" src="../assets/images/icon/prestamo.png" alt="Actividades"></div>
                   <div class="align-self-center">
-                      <h6 class="text-white m-t-10 m-b-0">Actividades Pendientes</h6>
-                      <h2 class="m-t-0 text-white">15</h2></div>
+                      <h6 class="text-white m-t-10 m-b-0">Préstamos En Proceso</h6>
+                      <h2 class="m-t-0 text-white">{{ prestamosProceso }}</h2></div>
               </div>
           </div>
       </div>
@@ -15,10 +15,10 @@
       <div class="card bg-success">
           <div class="card-body">
               <div class="d-flex no-block">
-                  <div class="m-r-20 align-self-center"><img style="width: 50px; height: 50px;" src="../assets/images/icon/prestamo.png" alt="Préstamo"></div>
+                  <div class="m-r-20 align-self-center"><img style="width: 50px; height: 50px;" src="../assets/images/icon/paste-icon.png" alt="Préstamo"></div>
                   <div class="align-self-center">
-                      <h6 class="text-white m-t-10 m-b-0">Préstamos Realizados</h6>
-                      <h2 class="m-t-0 text-white">236,000</h2></div>
+                      <h6 class="text-white m-t-10 m-b-0">Total Actividades</h6>
+                      <h2 class="m-t-0 text-white">{{ actividadesProceso }}</h2></div>
               </div>
           </div>
       </div>
@@ -30,7 +30,7 @@
                   <div class="m-r-20 align-self-center"><img style="width: 50px; height: 50px;" src="../assets/images/icon/inventario.png" alt="Inventario"></div>
                   <div class="align-self-center">
                       <h6 class="text-white m-t-10 m-b-0">Total Inventario</h6>
-                      <h2 class="m-t-0 text-white">987,563</h2></div>
+                      <h2 class="m-t-0 text-white">{{ inventario }}</h2></div>
               </div>
           </div>
       </div>
@@ -42,7 +42,7 @@
                   <div class="m-r-20 align-self-center"><img style="width: 60px; height: 50px;" src="../assets/images/icon/user.png" alt="Usuario"></div>
                   <div class="align-self-center">
                       <h6 class="text-white m-t-10 m-b-0">Total Usuarios</h6>
-                      <h2 class="m-t-0 text-white">5</h2></div>
+                      <h2 class="m-t-0 text-white">{{ usuarios }}</h2></div>
               </div>
           </div>
       </div>

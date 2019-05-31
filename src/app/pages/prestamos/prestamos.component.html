@@ -2,13 +2,32 @@
   <div class="col-12">
     <div class="card">
       <div class="card-body">
-        <input #input type="text" class="form-control" placeholder="Buscar préstamo..."/>
+          <h3 class="card-title">Filtrar Fecha Salida </h3>
+          <div class="row">
+              <div class="col-5">
+                  <label for="">De</label>
+                  <input #fechainicio type="date" [(ngModel)]="busquedaFechaDe" class="form-control">
+
+              </div>
+              <div class="col-5">
+                  <label for="">Hasta</label>
+                  <input #fechafin type="date"  [(ngModel)]="busquedaFechaHasta" class="form-control">
+
+              </div>
+              <div class="col-2">
+                  <br>
+                  <button class="btn btn-success waves-effect waves-light m-r-10" type="submit" (click)="cargarPrestamos()">
+                      <i class="fa fa-search"></i> Buscar
+                  </button>
+              </div>
+              
+          </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- <div class="row animated fadeIn">
+<div class="row animated fadeIn" *ngIf="cargando">
   <div class="col-sm-12">
     <div class="alert alert-warning text-center">
       <strong>Cargando</strong>
@@ -18,9 +37,9 @@
       <span>Espere por favor</span>
     </div>
   </div>
-</div> -->
+</div>
 
-<div class="row animated fadeIn">
+<div class="row animated fadeIn" *ngIf="!cargando">
     <div class="col-12">
       <div class="card">
         <div class="card-body">
@@ -31,42 +50,45 @@
               Agregar préstamos
             </button>
           </div>
-          <h3 class="card-title">Préstamos registrados ( <small>123</small> )</h3>
+          <h3 class="card-title">Préstamos registrados ( <small>{{totalRegistros}}</small> )</h3>
         
           <table class="table table-hover">
             <thead>
               <tr>
-                <th>Ciclo Escolar</th>
+                <th>Nombre Estudiante/Profesor</th>
                 <th>Cuenta</th>
+                <th>Carrera</th>
                 <th>Grupo</th>
-                <th>Nombre</th>
-                <th>Equipo</th>
                 <th>Fecha Salida</th>
                 <th>Fecha Entrega</th>
+                <th>Estado</th>
                 <th></th>
               </tr>
             </thead>
           
             <tbody>
-              <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+              <tr *ngFor="let prestamo of prestamos">
+                <td>{{ prestamo.nombre }}</td>
+                <td>{{ prestamo.cuentaEstudiante }}</td>
+                <td><span *ngIf="prestamo.carrera!=null ">{{ prestamo.carrera.nombre }}</span></td>
+                <td><span *ngIf="prestamo.grupo!=null ">{{ prestamo.grupo.nombre }}</span></td>
+                <td>{{ prestamo.fechaEntrada | fechas }}</td>
+                <td>{{ prestamo.fechaSalida | fechas }}</td>
                 <td>
-                  <button class="btn btn-success">
+                    <p *ngIf="prestamo.estatus=='A'"><span class="status text-success">•</span>En Proceso </p>
+                    <p *ngIf="prestamo.estatus=='B'"><span class="status text-secondary">•</span>Terminado </p>
+                </td>
+                <td>
+                  <button class="btn btn-success" (click)="openModaldetails(details, prestamo._id)" ngbTooltip="Ver Detalles">
                     <i class="fa fa-info-circle"></i>
                   </button>
 
-                  <button class="btn btn-primary">
-                    <i class="fa fa-save"></i>
+                  <button *ngIf="prestamo.estatus=='A'" (click)="openModalterminar(terminar, prestamo._id)" class="btn btn-warning" ngbTooltip="Finalizar préstamo">
+                    <i class="fa fa-pause" ></i>
                   </button>
 
-                  <button class="btn btn-danger">
-                    <i class="fa fa-trash-o"></i>
+                  <button (click)=" borrarPrestamo( prestamo )" class="btn btn-danger" ngbTooltip="Eliminar/Cancelar">
+                    <i class="fa fa-trash-o" ></i>
                   </button>
                 </td>
               </tr>
@@ -74,11 +96,11 @@
       
           </table>
 
-          <button class="btn btn-secondary">
+          <button (click)="cambiarDesde(-5)" class="btn btn-secondary">
             Anteriores
           </button>
 
-          <button class="btn btn-secondary">
+          <button (click)="cambiarDesde(5)" class="btn btn-secondary">
             Siguientes
           </button>
 
@@ -86,3 +108,84 @@
       </div>
     </div>
 </div>
+
+<!--MODAL DETALLE PRESTAMO-->
+<ng-template #details let-modal>
+  <div class="modal-header">
+      <h4 class="modal-title">DETALLES DE PRÉSTAMO</h4>
+      <button class="close" aria-label="Close" (click)="modal.dismiss()"></button>   
+  </div>
+  <div class="modal-body">
+      <div class="table-responsive">
+          <table class="table card-table table-vcenter text-nowrap">
+              <thead>
+                  <tr>
+                      <th class="w-1">#</th>
+                      <th>Equipo / Objeto</th>
+                      <th>Observaciones</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr *ngFor="let detalle of detallesPrestamo; index as i">
+                      <td><span class="text-muted">{{i+1}}</span></td>
+                      <td>{{detalle.inventario.descripcion}}</td>
+                      <td>{{detalle.inventario.observaciones}}</td>
+                  </tr>
+              </tbody>
+          </table>
+      </div>
+      
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-warning cerrar" (click)="modal.dismiss()">Cerrar</button>
+  </div>
+</ng-template>
+<!--MODAL DETALLE VENTA-->
+
+<!--MODAL TERMINAR PRESTAMO-->
+<ng-template #terminar let-modal>
+  <div class="modal-header">
+      <h4 class="modal-title">TERMINAR PRÉSTAMO</h4>
+      <button class="close" aria-label="Close" (click)="modal.dismiss()"></button>   
+  </div>
+  <div class="modal-body">
+      <div class="table-responsive">
+          <table class="table card-table table-vcenter text-nowrap">
+              <thead>
+                  <tr>
+                      <th class="w-1">#</th>
+                      <th>Equipo / Objeto</th>
+                      <th>Observaciones</th>
+                      <th>Entregado   
+                          <div class="form-check text-center" style="padding: 0 0 0 0; width:15px;
+                          height:15px;">
+                            <input #inputEl type="checkbox" class="form-check-input" (click)="cambiarTodos(inputEl.checked)" id="check">
+                            <label class="" for="check"></label>
+                          </div>
+                      </th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr *ngFor="let detalle of productosPrestados; index as i">
+                      <td><span class="text-muted">{{i+1}}</span></td>
+                      <td>{{detalle.inventario.descripcion}}</td>
+                      <td>{{detalle.inventario.observaciones}}</td>
+                      <td>
+                        
+                          <div class="form-check">
+                              <input [checked]="detalle.inventario.estatus=='D'" (click)="cambiarEstadoEntregado(i)" type="checkbox" class="form-check-input" id="{{detalle.inventario._id}}">
+                              <label class="form-check-label" for="{{detalle.inventario._id}}"></label>
+                          </div>
+                      </td>
+                  </tr>
+              </tbody>
+          </table>
+      </div>
+      
+  </div>
+  <div class="modal-footer">      
+      <button type="button" (click)="registrar()" class="btn btn-success waves-effect waves-light m-r-10"> <i class="fa fa-check"></i> Guardar</button>
+      <button type="button" class="btn btn-warning cerrar" (click)="modal.dismiss()">Cerrar</button>
+  </div>
+</ng-template>
+<!--MODAL DETALLE VENTA-->

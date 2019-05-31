@@ -2,13 +2,49 @@
   <div class="col-12">
     <div class="card">
       <div class="card-body">
-        <input #input type="text" class="form-control" placeholder="Buscar actividad..."/>
+          <h3 class="card-title">Filtrar Fecha Registro </h3>
+          <div class="row">
+              <div class="col-5">
+                  <label for="">De</label>
+                  <input type="date" [(ngModel)]="busquedaFechaDe" class="form-control">
+
+              </div>
+              <div class="col-5">
+                  <label for="">Hasta</label>
+                  <input type="date"  [(ngModel)]="busquedaFechaHasta" class="form-control">
+
+              </div>
+              <div class="col-5">
+                  <label for="">Tipo Servicio</label>
+                  <select [(ngModel)]="servicio" class="form-control custom-select" data-placeholder="Seleccionar servicio" tabindex="-1">
+                    <option [value]="1" selected>Selecciona...</option>  
+                    <option *ngFor="let servicio of servicios" [value]="servicio._id">{{ servicio.nombre }}</option>
+                  </select>
+
+              </div><div class="col-5">
+                  <label class="">Estado </label> <span *ngIf="estatus=='A'" class="status text-success">•</span> <span *ngIf="estatus=='P'" class="status text-warning">•</span>  <span *ngIf="estatus=='F'" class="status text-secondary">•</span>  
+                  <select [(ngModel)]="estatus" class="form-control custom-select" data-placeholder="Seleccionar estado" tabindex="-1">
+                      <option [value]="1" selected>Selecciona...</option>    
+                    <option value="A"> Registrado</option>
+                      <option value="P"> En Proceso</option>
+                      <option value="F"> Finalizado</option>
+
+                  </select>
+              </div>
+              <div class="col-2">
+                  <br>
+                  <button class="btn btn-success waves-effect waves-light m-r-10" type="submit" (click)="cargarActividades()">
+                      <i class="fa fa-search"></i> Buscar
+                  </button>
+              </div>
+              
+          </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- <div class="row animated fadeIn">
+<div class="row animated fadeIn" *ngIf="cargando">
   <div class="col-sm-12">
     <div class="alert alert-warning text-center">
       <strong>Cargando</strong>
@@ -18,9 +54,9 @@
       <span>Espere por favor</span>
     </div>
   </div>
-</div> -->
+</div>
 
-<div class="row animated fadeIn">
+<div class="row animated fadeIn" *ngIf="!cargando">
     <div class="col-12">
       <div class="card">
         <div class="card-body">
@@ -31,45 +67,55 @@
               Agregar actividad
             </button>
           </div>
-          <h3 class="card-title">Actividades registrados ( <small>123</small> )</h3>
+          <h3 class="card-title">Actividades registrados ( <small>{{totalRegistros}}</small> )</h3>
         
           <table class="table table-hover">
             <thead>
               <tr>
                 <th>Nombre</th>
                 <th>Cuenta</th>
-                <th>Grupo</th>
                 <th>Carrera</th>
+                <th>Grupo</th>
                 <th>Servicio</th>
-                <th>Equipo</th>
-                <th>Marca</th>
-                <th>Color</th>
-                <th>Fecha de Entrada</th>
-                <th>Fecha de Salida</th>
+                <th>Fecha de Registro</th>
+                <th>Fecha de Terminación</th>
                 <th>Estado</th>
                 <th></th>
               </tr>
             </thead>
           
             <tbody>
-              <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+              <tr *ngFor="let actividad of actividades">
+                <td>{{ actividad.nombre }}</td>
+                <td>{{ actividad.cuentaEstudiante }}</td>
+                <td><span *ngIf="actividad.carrera">{{ actividad.carrera.nombre }}</span></td>
+                <td><span *ngIf="actividad.grupo">{{ actividad.grupo.nombre }}</span></td>
+                <td><span *ngIf="actividad.tipoServicio">{{ actividad.tipoServicio.nombre }}</span></td>
+                <td>{{ actividad.fechaEntrada | fechas }}</td>
+                <td>{{ actividad.fechaSalida | fechas }}</td>
                 <td>
-                  <button class="btn btn-primary">
-                    <i class="fa fa-save"></i>
+                    <p *ngIf="actividad.estatus=='A'"> <span class="status text-success">•</span> Registrado </p>
+                    <p *ngIf="actividad.estatus=='P'"> <span class="status text-warning">•</span> En Proceso </p>
+                    <p *ngIf="actividad.estatus=='F'"> <span class="status text-secondary">•</span> Finalizado </p>
+                </td>
+                <td>
+                  <button class="btn btn-primary" (click)="openModaldetails(details, actividad)" ngbTooltip="Ver">
+                    <i class="fa fa-info-circle"></i>
+                  </button>
+                  
+                  <button *ngIf="actividad.estatus!='F'" class="btn btn-warning" (click)="openModalEdit(edit, actividad)" ngbTooltip="Editar">
+                    <i class="fa fa-pencil" ></i>
                   </button>
 
-                  <button class="btn btn-danger">
+                  <button *ngIf="actividad.estatus=='A'" (click)="activarActividad( actividad )" class="btn btn-success" ngbTooltip="Iniciar">
+                      <i class="fa fa-play"></i>
+                  </button>
+
+                  <button *ngIf="actividad.estatus=='P'" (click)="terminarActividad( actividad )" class="btn btn-danger" ngbTooltip="Terminar">
+                      <i class="fa fa-pause"></i>
+                  </button>
+
+                  <button (click)="borrarActividad( actividad )" class="btn btn-danger" ngbTooltip="Eliminar/Cancelar">
                     <i class="fa fa-trash-o"></i>
                   </button>
                 </td>
@@ -78,11 +124,11 @@
       
           </table>
 
-          <button class="btn btn-secondary">
+          <button (click)="cambiarDesde(-5)"  class="btn btn-secondary">
             Anteriores
           </button>
 
-          <button class="btn btn-secondary">
+          <button (click)="cambiarDesde(5)"  class="btn btn-secondary">
             Siguientes
           </button>
 
@@ -90,3 +136,216 @@
       </div>
     </div>
 </div>
+
+<!--MODAL DETAILS-->
+<ng-template #details let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">DETALLES</h4>
+        <button class="close" aria-label="Close" (click)="modal.dismiss()"></button>   
+    </div>
+
+    <div class="modal-body"> 
+
+          <div class="form-group">
+              <div class="row gutters-xs">
+                  <div class="col-7">
+                      <label for="cliente" class="form-label">Nombre Estudiante/Profesor:</label>&nbsp;
+                      <p>{{actividad.nombre}}</p>
+                  </div>
+
+                  <div class="col-5">
+                    <label for="animal" class="form-label">Cuenta / Matrícula:</label>&nbsp;
+                    <p>{{actividad.cuentaEstudiante}} </p>
+                  </div>
+              </div>  
+          </div>
+          
+          <div class="form-group">
+              <div class="row gutters-xs">
+                  <div class="col-6">
+                      <label for="sexo" class="form-label">Carrera:</label>&nbsp;
+                      <p><span *ngIf="actividad.carrera">{{ actividad.carrera.nombre }}</span></p>
+                  </div>
+                  
+                  <div class="col-6">
+                    <label for="fechanac" class="form-label">Grupo:</label>&nbsp;
+                    <p><span *ngIf="actividad.grupo">{{ actividad.grupo.nombre }}</span></p>
+                  </div>
+              </div>  
+          </div>
+
+          <div class="row gutters-xs">
+            <div class="col-6">
+              <div class="form-group">
+                <label class="especie" class="form-label">Tipo de Servicio:</label>&nbsp;
+                <p><span *ngIf="actividad.tipoServicio">{{ actividad.tipoServicio.nombre }}</span></p>
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="form-group">
+                <label class="raza" class="form-label">Equipo:</label>&nbsp;
+                <p>{{actividad.equipo}}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="row gutters-xs">
+              <div class="col-6">
+                <div class="form-group">
+                  <label class="especie" class="form-label">Marca:</label>&nbsp;
+                  <p>{{actividad.marca}}</p>
+                </div>
+              </div>
+  
+              <div class="col-6">
+                <div class="form-group">
+                  <label class="raza" class="form-label">Color:</label>&nbsp;
+                  <p>{{actividad.color}}</p>
+                </div>
+              </div>
+            </div>
+
+          <div class="row gutters-xs">
+            <div class="col-6">
+              <div class="form-group">
+                <label class="pelo" class="form-label">Estado:</label>&nbsp;
+                <p *ngIf="actividad.estatus=='A'"> <span class="status text-success">•</span> Registrado </p>
+                <p *ngIf="actividad.estatus=='P'"> <span class="status text-warning">•</span> En Proceso </p>
+                <p *ngIf="actividad.estatus=='F'">  <span class="status text-secondary">•</span>Finalizado </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="row gutters-xs">
+              <div class="col-6">
+                <div class="form-group">
+                  <label class="pelo" class="form-label">Fecha de Registro:</label>&nbsp;
+                  <p> {{actividad.fechaEntrada | fechas}} </p>
+                </div>
+              </div>
+              <div class="col-6">
+                  <label for="color" class="form-label">Fecha de Terminación:</label>&nbsp;
+                    <p > {{actividad.fechaSalida | fechas }} </p>
+              </div>
+            </div>
+
+          <div class="form-group">
+            <label for="observaciones" class="form-label">Observaciones:</label>&nbsp;
+            <p>
+              {{actividad.observaciones}}
+            </p>
+          </div>
+
+    </div>
+    <div class="modal-footer d-flex">
+        <button type="button" class="btn btn-warning cerrar" (click)="modal.dismiss()">Cerrar</button>
+    </div>
+</ng-template>
+<!--MODAL DETAILS END-->
+
+<!--MODAL EDITAR-->
+<ng-template #edit let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">EDITAR ACTIVIDAD</h4>
+        <button class="close" aria-label="Close" (click)="modal.dismiss()"></button>   
+    </div>
+  
+    <div class="modal-body">
+      <form ngNativeValidate [formGroup]="form" (ngSubmit)="registrar()" >
+                  <div class="form-body">
+                      <!--/row-->
+                      <div class="row p-t-20">
+                          <div class="col-md-6">
+                              <div class="form-group">
+                                  <label class="control-label">Nombre Estudiante/Profesor*</label>
+                                  <input type="text"  formControlName="nombre" name="nombre"  class="form-control" required>
+                              </div>
+                          </div>
+                          <!--/span-->
+                          <div class="col-md-6">
+                              <div class="form-group">
+                                  <label class="control-label">Cuenta / Matrícula</label>
+                                  <input type="text"  formControlName="cuenta" name="cuenta"  class="form-control">
+                              </div>
+                          </div>
+                      </div>
+                      <!--/row-->
+                      <div class="row">
+                          <div class="col-md-6">
+                              <div class="form-group">
+                                  <label class="control-label">Carrera</label>
+                                  <div class="input-group">
+                                  <select formControlName="carrera" name="carrera"  class="form-control custom-select" data-placeholder="Seleccionar carrera" tabindex="-1">
+                                      <option *ngFor="let carrera of carreras" [value]="carrera._id">{{ carrera.nombre }}</option>
+                                  </select>
+                                  <button (click)="crearCarrera()" class="btn btn-success"><i class="fa fa-plus"></i></button>
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="col-md-6">
+                              <div class="form-group">
+                                  <label class="control-label">Grupo</label>
+                                  <div class="input-group">
+                                  <select formControlName="grupo" name="grupo" class="form-control custom-select" data-placeholder="Seleccionar grupo" tabindex="1">
+                                      <option *ngFor="let grupo of grupos" [value]="grupo._id">{{ grupo.nombre }}</option>
+                                  </select>
+                                  <button (click)="crearGrupo()" class="btn btn-success"><i class="fa fa-plus"></i></button>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                      <!--/row-->
+                      <h3 class="box-title m-t-40">Descripción del Servicio</h3>
+                      <hr>
+                      <div class="row">
+                          <div class="col-md-12 ">
+                              <div class="form-group">
+                                  <label>Tipo de Servicio*</label>
+                                  <div class="input-group">
+                                          <select formControlName="tipoServicio" name="tipoServicio" class="form-control custom-select" data-placeholder="Seleccionar servicio" tabindex="1" required>
+                                                  <option *ngFor="let servicio of servicios" [value]="servicio._id">{{ servicio.nombre }}</option>
+                                              </select>
+                                          <button (click)="crearServicio()" class="btn btn-success"><i class="fa fa-plus"></i></button>
+
+                                  </div>
+                              </div>
+                          </div>
+                          <div class="col-md-6">
+                              <div class="form-group">
+                                  <label class="control-label">Equipo</label>
+                                  <input formControlName="equipo" name="equipo" type="text" id="equipo" class="form-control">
+                              </div>
+                          </div>
+                          <!--/span-->
+                          <div class="col-md-6">
+                              <div class="form-group">
+                                  <label class="control-label">Marca</label>
+                                  <input formControlName="marca" name="marca" type="text" id="marca" class="form-control">
+                              </div>
+                          </div>
+                          <!--/span-->
+                          <div class="col-md-6">
+                              <div class="form-group">
+                                  <label class="control-label">Color</label>
+                                  <input formControlName="color" name="color" type="text" id="color" class="form-control">
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+                  <h3 class="box-title m-t-40">Notas</h3>
+                  <hr>
+                  <div class="row">
+                      <div class="col-md-12 ">
+                          <div class="form-group">
+                              <textarea formControlName="observaciones" name="observaciones" class="form-control" rows="5" id="notas"></textarea>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="modal-footer d-flex form-actions">
+                      <button type="submit" class="btn btn-success waves-effect waves-light m-r-10"> <i class="fa fa-check"></i> Guardar</button>
+                      <button type="button" class="btn btn-warning cerrar" (click)="modal.dismiss()">Cerrar</button>
+                  </div>
+              </form>  
+    </div>
+  </ng-template>

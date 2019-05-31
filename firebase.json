@@ -1,0 +1,10 @@
+{
+  "hosting": {
+    "public": "dist/sistema-centro-computo",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}

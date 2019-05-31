@@ -1,4 +1,7 @@
+import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
+import { NgbModalModule, NgbTooltipModule, NgbCheckBox } from '@ng-bootstrap/ng-bootstrap';
+import { ReactiveFormsModule, FormsModule } from "@angular/forms";
 
 //Modulos
 import { SharedModule } from "../shared/shared.module";
@@ -24,8 +27,8 @@ import { AddprestamoComponent } from './prestamos/addprestamo/addprestamo.compon
 import { AddusuarioComponent } from './usuarios/addusuario/addusuario.component';
 import { AddinventarioComponent } from './inventario/addinventario/addinventario.component';
 import { AddactividadComponent } from './actividades/addactividad/addactividad.component';
-import { ReactiveFormsModule, FormsModule } from "@angular/forms";
-import { CommonModule } from "@angular/common";
+
+import { FechasPipe } from './pipes/fechas.pipe';
 
 @NgModule({
     declarations:[
@@ -42,6 +45,7 @@ import { CommonModule } from "@angular/common";
         AddusuarioComponent,
         AddinventarioComponent,
         AddactividadComponent,
+        FechasPipe
     ],
     exports: [
         DashboardComponent,
@@ -53,7 +57,9 @@ import { CommonModule } from "@angular/common";
         ChartsModule,
         FormsModule,
         ReactiveFormsModule,
-        CommonModule
+        CommonModule,
+        NgbModalModule.forRoot(),
+        NgbTooltipModule.forRoot()
     ]
 })
 export class PagesModule {}

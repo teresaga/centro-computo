@@ -5,27 +5,21 @@
                 <h4 class="m-b-0 text-white">Registrar nuevo préstamo</h4>
             </div>
             <div class="card-body">
-                <form action="#">
+                <form ngNativeValidate [formGroup]="form">
                     <div class="form-body">
                         <div class="row p-t-20">
+                            <!--/span-->
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="control-label">Ciclo Escolar</label>
-                                    <input type="text" id="ciclo" class="form-control">
+                                    <label class="control-label">Nombre de Estudiante/Profesor*</label>
+                                    <input formControlName="nombre" name="nombre"  type="text" id="nombre" class="form-control">
                                 </div>
                             </div>
                             <!--/span-->
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label class="control-label">Nombre</label>
-                                    <input type="text" id="nombre" class="form-control">
-                                </div>
-                            </div>
-                            <!--/span-->
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="control-label">Cuenta</label>
-                                    <input type="text" id="cuenta" class="form-control">
+                                    <label class="control-label">Cuenta / Matricula</label>
+                                    <input formControlName="cuenta" name="cuenta" type="text" id="cuenta" class="form-control">
                                 </div>
                             </div>
                         </div>
@@ -34,24 +28,27 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="control-label">Carrera</label>
-                                    <select class="form-control custom-select" data-placeholder="Seleccionar carrera" tabindex="1">
-                                        <option value="civil">ING. CIVIL</option>
-                                        <option value="geodesica">ING. GEODÉSICA</option>
-                                        <option value="software">ING. DE SOFTWARE</option>
-                                    </select>
+                                    <div class="input-group">
+                                        
+                                        <select formControlName="carrera" name="carrera"  class="form-control custom-select" data-placeholder="Seleccionar carrera" tabindex="-1">
+                                                <option *ngFor="let carrera of carreras" [value]="carrera._id">{{ carrera.nombre }}</option>
+                                        </select>
+                                        <button (click)="crearCarrera()" class="btn btn-success"><i class="fa fa-plus"></i></button>
+
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="control-label">Grupo</label>
-                                    <select class="form-control custom-select" data-placeholder="Seleccionar grupo" tabindex="1">
-                                        <option value="101">101</option>
-                                        <option value="102">102</option>
-                                        <option value="103">103</option>
-                                        <option value="201">201</option>
-                                        <option value="202">202</option>
-                                        <option value="203">203</option>
-                                    </select>
+                                    <div class="input-group">
+
+                                        <select formControlName="grupo" name="grupo" class="form-control custom-select" data-placeholder="Seleccionar grupo" tabindex="1">
+                                                <option *ngFor="let grupo of grupos" [value]="grupo._id">{{ grupo.nombre }}</option>
+                                            </select>
+                                        <button (click)="crearGrupo()" class="btn btn-success"><i class="fa fa-plus"></i></button>
+
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -61,23 +58,137 @@
                         <div class="row">
                             <div class="col-md-12 ">
                                 <div class="form-group">
-                                    <label>Equipo</label>
+                                        <label>Equipo</label>
                                     <div class="input-group">
-                                        <select class="form-control custom-select" data-placeholder="Seleccionar equipo" tabindex="1">
-                                            <option value="proyector1">Proyector 1</option>
-                                            <option value="proyector2">Proyector 2</option>
+                                        <select formControlName="idProducto" name="idProducto"  class="form-control custom-select" data-placeholder="Seleccionar equipo" tabindex="1">
+                                            <option *ngFor="let inv of inventario" [value]="inv._id">{{ inv.descripcion }}</option>
                                         </select>
-                                        <button class="btn btn-success"><i class="fa fa-plus"></i></button>
+                                        <button (click)="agregarEquipo()" class="btn btn-primary" ngbTooltip="Agregar equipo al préstamo"><i class="fa fa-plus"></i></button>
+
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                            <th>#</th>
+                            <th>Descripción</th>
+                            <th>Observaciones</th>
+                            <th></th>
+                            </tr>
+                        </thead>
+                        
+                        <tbody>
+                            <tr *ngFor="let productos of productosPrestados; index as i">
+                                <td><span class="text-muted">{{i+1}}</span></td>
+                            <td>{{ productos.descripcion }}</td>
+                            <td>{{ productos.observaciones }}</td>
+                            <td>
+                                <button class="btn btn-success" (click)="openModaldetails(detailsinventario, productos)">
+                                <i class="fa fa-info-circle"></i>
+                                </button>
+            
+                                <button class="btn btn-danger" (click)="eliminarProducto(i)">
+                                <i class="fa fa-trash-o"></i>
+                                </button>
+                            </td>
+                            </tr>
+                        </tbody>
+                    
+                    </table>
+
                     <div class="form-actions">
-                        <button type="submit" class="btn btn-success waves-effect waves-light m-r-10"> <i class="fa fa-check"></i> Guardar</button>
+                        <button type="submit" (click)="registrar()" class="btn btn-success waves-effect waves-light m-r-10"> <i class="fa fa-check"></i> Guardar</button>
                         <button routerLink="/prestamos" type="button" class="btn btn-inverse waves-effect waves-light">Cancelar</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+
+    <!--MODAL DETAILS-->
+<ng-template #detailsinventario let-modal>
+        <div class="modal-header">
+            <h4 class="modal-title">DETALLES</h4>
+            <button class="close" aria-label="Close" (click)="modal.dismiss()"></button>   
+        </div>
+    
+        <div class="modal-body"> 
+    
+              <div class="form-group">
+                  <div class="row gutters-xs">
+                      <div class="col-6">
+                          <label for="cliente" class="form-label">Descripción:</label>&nbsp;
+                          <p>{{inv.descripcion}}</p>
+                      </div>
+    
+                      <div class="col-6">
+                        <label for="animal" class="form-label">Modelo:</label>&nbsp;
+                        <p>{{inv.modelo}} </p>
+                      </div>
+                  </div>  
+              </div>
+              
+              <div class="form-group">
+                  <div class="row gutters-xs">
+                      <div class="col-6">
+                          <label for="sexo" class="form-label">Serie:</label>&nbsp;
+                          <p>{{inv.serie}}</p>
+                      </div>
+                      
+                      <div class="col-6">
+                        <label for="fechanac" class="form-label">Localización:</label>&nbsp;
+                        <p>{{inv.localizacion}}</p>
+                      </div>
+                  </div>  
+              </div>
+    
+              <div class="row gutters-xs">
+                <div class="col-6">
+                  <div class="form-group">
+                    <label class="especie" class="form-label">Persona Asignada:</label>&nbsp;
+                    <p>{{inv.personaAsignacion}}</p>
+                  </div>
+                </div>
+    
+                <div class="col-6">
+                  <div class="form-group">
+                    <label class="raza" class="form-label">Fecha Registro:</label>&nbsp;
+                    <p>{{inv.fechaRegistro | fechas}}</p>
+                  </div>
+                </div>
+              </div>
+    
+              <div class="row gutters-xs">
+                <div class="col-6">
+                  <div class="form-group">
+                    <label class="pelo" class="form-label">Tipo:</label>&nbsp;
+                      <p *ngIf="inv.tipo=='A'"> Asignado a Personal </p>
+                      <p *ngIf="inv.tipo=='P'"> Para préstamos </p>
+                      <p *ngIf="inv.tipo=='O'"> Otros </p>
+                  </div>
+                </div>
+                <div class="col-6">
+                    <label for="color" class="form-label">Estado:</label>&nbsp;
+                      <p *ngIf="inv.estatus=='D'"> Disponible </p>
+                      <p *ngIf="inv.estatus=='ND'"> No Disponible </p>
+                      <p *ngIf="inv.estatus=='E'"> Extraviado </p>
+                </div>
+              </div>
+    
+              <div class="form-group">
+                <label for="observaciones" class="form-label">Observaciones:</label>&nbsp;
+                <p>
+                  {{inv.observaciones}}
+                </p>
+              </div>
+    
+        </div>
+        <div class="modal-footer d-flex">
+            <button type="button" class="btn btn-warning cerrar" (click)="modal.dismiss()">Cerrar</button>
+        </div>
+    </ng-template>
+    <!--MODAL DETAILS END-->

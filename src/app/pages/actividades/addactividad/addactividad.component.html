@@ -4,7 +4,7 @@
             <h4 class="m-b-0 text-white">Registrar nueva actividad</h4>
         </div>
         <div class="card-body">
-            <form action="#">
+            <form ngNativeValidate [formGroup]="form" (ngSubmit)="registrar()">
                 <div class="form-body">
                     <!--/row-->
                     <h3 class="box-title ">Información general</h3>
@@ -12,15 +12,15 @@
                     <div class="row p-t-20">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="control-label">Nombre</label>
-                                <input type="text" id="nombre" class="form-control">
+                                <label class="control-label">Nombre Estudiante/Profesor*</label>
+                                <input type="text"  formControlName="nombre" name="nombre"  class="form-control" required>
                             </div>
                         </div>
                         <!--/span-->
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="control-label">Cuenta</label>
-                                <input type="text" id="cuenta" class="form-control">
+                                <label class="control-label">Cuenta / Matrícula</label>
+                                <input type="text"  formControlName="cuenta" name="cuenta"  class="form-control">
                             </div>
                         </div>
                     </div>
@@ -29,24 +29,23 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label class="control-label">Carrera</label>
-                                <select class="form-control custom-select" data-placeholder="Elegir carrera" tabindex="1">
-                                    <option value="civil">ING. CIVIL</option>
-                                    <option value="geodesica">ING. GEODÉSICA</option>
-                                    <option value="software">ING. DE SOFTWARE</option>
+                                <div class="input-group">
+                                <select formControlName="carrera" name="carrera"  class="form-control custom-select" data-placeholder="Seleccionar carrera" tabindex="-1">
+                                    <option *ngFor="let carrera of carreras" [value]="carrera._id">{{ carrera.nombre }}</option>
                                 </select>
+                                <button (click)="crearCarrera()" class="btn btn-success"><i class="fa fa-plus"></i></button>
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label class="control-label">Grupo</label>
-                                <select class="form-control custom-select" data-placeholder="Elegir grupo" tabindex="1">
-                                    <option value="101">101</option>
-                                    <option value="102">102</option>
-                                    <option value="103">103</option>
-                                    <option value="201">201</option>
-                                    <option value="202">202</option>
-                                    <option value="203">203</option>
+                                <div class="input-group">
+                                <select formControlName="grupo" name="grupo" class="form-control custom-select" data-placeholder="Seleccionar grupo" tabindex="1">
+                                    <option *ngFor="let grupo of grupos" [value]="grupo._id">{{ grupo.nombre }}</option>
                                 </select>
+                                <button (click)="crearGrupo()" class="btn btn-success"><i class="fa fa-plus"></i></button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -56,19 +55,34 @@
                     <div class="row">
                         <div class="col-md-12 ">
                             <div class="form-group">
-                                <label>Servicio</label>
+                                <label>Tipo de Servicio*</label>
                                 <div class="input-group">
-                                    <select class="form-control custom-select" data-placeholder="Seleccionar servicio" tabindex="1">
-                                        <option value="servicio1">INSTALACIÓN DE SOFTWARE</option>
-                                        <option value="servicio2">MANTENIMIENTO</option>
-                                        <option value="servicio3">FORMATEO</option>
-                                        <option value="servicio4">REPARACIÓN</option>
-                                        <option value="servicio5">ASESORÍA</option>
-                                        <option value="servicio6">ACTUALIZACIÓN</option>
-                                        <option value="servicio7">CAMBIO DE HARDWARE</option>
-                                    </select>
-                                    <button class="btn btn-success"><i class="fa fa-plus"></i></button>
+                                        <select formControlName="tipoServicio" name="tipoServicio" class="form-control custom-select" data-placeholder="Seleccionar servicio" tabindex="1" required>
+                                                <option *ngFor="let servicio of servicios" [value]="servicio._id">{{ servicio.nombre }}</option>
+                                            </select>
+                                        <button (click)="crearServicio()" class="btn btn-success"><i class="fa fa-plus"></i></button>
+
                                 </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">Equipo</label>
+                                <input formControlName="equipo" name="equipo" type="text" id="equipo" class="form-control">
+                            </div>
+                        </div>
+                        <!--/span-->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">Marca</label>
+                                <input formControlName="marca" name="marca" type="text" id="marca" class="form-control">
+                            </div>
+                        </div>
+                        <!--/span-->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">Color</label>
+                                <input formControlName="color" name="color" type="text" id="color" class="form-control">
                             </div>
                         </div>
                     </div>
@@ -78,7 +92,7 @@
                 <div class="row">
                     <div class="col-md-12 ">
                         <div class="form-group">
-                            <textarea class="form-control" rows="5" id="notas"></textarea>
+                            <textarea formControlName="observaciones" name="observaciones" class="form-control" rows="5" id="notas"></textarea>
                         </div>
                     </div>
                 </div>

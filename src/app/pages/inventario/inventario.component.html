@@ -2,13 +2,13 @@
   <div class="col-12">
     <div class="card">
       <div class="card-body">
-        <input #input type="text" class="form-control" placeholder="Buscar..."/>
+        <input #input (keyup)="buscarInventario( input.value )" type="text" class="form-control" placeholder="Buscar..."/>
       </div>
     </div>
   </div>
 </div>
 
-<!-- <div class="row animated fadeIn">
+<div class="row animated fadeIn" *ngIf="cargando">
   <div class="col-sm-12">
     <div class="alert alert-warning text-center">
       <strong>Cargando</strong>
@@ -18,9 +18,9 @@
       <span>Espere por favor</span>
     </div>
   </div>
-</div> -->
+</div>
 
-<div class="row animated fadeIn">
+<div class="row animated fadeIn" *ngIf="!cargando">
     <div class="col-12">
       <div class="card">
         <div class="card-body">
@@ -31,35 +31,47 @@
               Agregar inventario
             </button>
           </div>
-          <h3 class="card-title">Inventario registrado ( <small>123</small> )</h3>
+          <h3 class="card-title">Inventario registrado ( <small> {{ this.totalRegistros }} </small> )</h3>
         
           <table class="table table-hover">
             <thead>
               <tr>
                 <th>Descripción</th>
-                <th>Modelo</th>
-                <th>Serie</th>
-                <th>Localización</th>
+                <th>Fecha Registro</th>
                 <th>Tipo</th>
                 <th>Estado</th>
+                <th>Observaciones</th>
                 <th></th>
               </tr>
             </thead>
           
             <tbody>
-              <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+              <tr *ngFor="let inv of inventarios">
+                <td> {{ inv.descripcion }} </td>
+                <td> {{ inv.fechaRegistro | fechas }} </td> 
                 <td>
-                  <button class="btn btn-primary">
-                    <i class="fa fa-save"></i>
+                    <p *ngIf="inv.tipo=='A'"> Asignado a Personal </p>
+                    <p *ngIf="inv.tipo=='P'"> Para préstamos </p>
+                    <p *ngIf="inv.tipo=='O'"> Otros </p>
+
+                </td>
+                <td> 
+                      <p *ngIf="inv.estatus=='D'"> <span class="status text-success">•</span> Disponible </p>
+                      <p *ngIf="inv.estatus=='ND'"> <span class="status text-danger">•</span> No Disponible </p>
+                      <p *ngIf="inv.estatus=='O'"> <span class="status text-warning">•</span> Ocupado </p>
+                      <p *ngIf="inv.estatus=='E'"> <span class="status text-secondary">•</span> Extraviado </p>
+                </td>
+                <td> {{ inv.observaciones }} </td>
+                <td>
+                  <button class="btn btn-primary" (click)="openModaldetails(detailsinventario, inv)" ngbTooltip="Ver">
+                    <i class="fa fa-info-circle"></i>
                   </button>
 
-                  <button class="btn btn-danger">
+                  <button class="btn btn-warning" (click)="openModalEdit(editinventario, inv)" ngbTooltip="Editar">
+                      <i class="fa fa-pencil" ></i>
+                    </button>
+
+                  <button (click)=" borrarInventario( inv )" class="btn btn-danger" ngbTooltip="Eliminar">
                     <i class="fa fa-trash-o"></i>
                   </button>
                 </td>
@@ -68,11 +80,11 @@
       
           </table>
 
-          <button class="btn btn-secondary">
+          <button (click)="cambiarDesde(-5)" class="btn btn-secondary">
             Anteriores
           </button>
 
-          <button class="btn btn-secondary">
+          <button (click)="cambiarDesde(5)" class="btn btn-secondary">
             Siguientes
           </button>
 
@@ -80,3 +92,178 @@
       </div>
     </div>
 </div>
+
+<!--MODAL EDITAR-->
+<ng-template #editinventario let-modal>
+  <div class="modal-header">
+      <h4 class="modal-title">EDITAR INVENTARIO</h4>
+      <button class="close" aria-label="Close" (click)="modal.dismiss()"></button>   
+  </div>
+
+  <div class="modal-body">
+    <form ngNativeValidate [formGroup]="form" (ngSubmit)="registrar()" >
+                <div class="form-body">
+                    <div class="row p-t-20">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">Descripción*</label>
+                                <input formControlName="descripcion" name="descripcion" type="text" id="descripcion" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">Tipo*</label>
+                                <select formControlName="tipo" name="tipo" class="form-control custom-select" data-placeholder="Seleccionar..." tabindex="-1" required>
+                                    <option value="A">Asignar a Personal</option>
+                                    <option value="P">Para préstamos</option>
+                                    <option value="O">Otros</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">Modelo</label>
+                                <input formControlName="modelo" name="modelo" type="text" id="modelo" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">Número de Serie</label>
+                                <input formControlName="serie" name="serie" type="text" id="serie" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-6" *ngIf="form.value.tipo=='O'">
+                            <div class="form-group">
+                                <label class="control-label">Localización*</label>
+                                <input formControlName="localizacion" name="localizacion" type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-6" *ngIf="form.value.tipo=='A'">
+                            <div class="form-group">
+                                <label class="control-label">Persona Asignada*</label>
+                                <input formControlName="persona" name="persona" type="text" id="persona" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">Estado </label> <span *ngIf="form.value.estado=='E'" class="status text-secondary">•</span> <span *ngIf="form.value.estado=='ND'" class="status text-danger">•</span>  <span *ngIf="form.value.estado=='D'" class="status text-success">•</span>  <span *ngIf="form.value.estado=='O'" class="status text-warning">•</span> 
+                                <select formControlName="estado" name="estado" class="form-control custom-select" data-placeholder="Seleccionar..." tabindex="-1" required>
+                                    <option *ngIf="inventarioEdit.estatus!='O'" value="D">Disponible</option>
+                                    <option *ngIf="inventarioEdit.estatus!='O'" value="ND">No Disponible</option>
+                                    <option *ngIf="inventarioEdit.estatus!='O'" value="E">Extraviado</option>
+                                    <option *ngIf="inventarioEdit.estatus=='O'" value="O">Ocupado</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">Observaciones</label>
+                                <textarea formControlName="observaciones" name="observaciones" rows="5" class="form-control"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" *ngIf="(form.value.persona==null || form.value.persona=='') && form.value.tipo=='A' && !form.pristine">
+                        <p class="text-danger">
+                            Ingresar persona a la cual se le asignará
+                        </p>
+                    </div>
+
+                    <div class="form-group" *ngIf="(form.value.localizacion==null || form.value.localizacion=='') && form.value.tipo=='O' && !form.pristine">
+                        <p class="text-danger">
+                            Ingresar lugar donde se localiza el equipo ( ej. Centro de cómputo, Dirección, Biblioteca, etc. )
+                        </p>
+                    </div>
+
+                </div>
+                <div class="modal-footer d-flex form-actions">
+                    <button type="submit" class="btn btn-success waves-effect waves-light m-r-10"> <i class="fa fa-check"></i> Guardar</button>
+                    <button type="button" class="btn btn-warning cerrar" (click)="modal.dismiss()">Cerrar</button>
+                </div>
+            </form>  
+  </div>
+</ng-template>
+
+<!--MODAL DETAILS-->
+<ng-template #detailsinventario let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title">DETALLES</h4>
+        <button class="close" aria-label="Close" (click)="modal.dismiss()"></button>   
+    </div>
+
+    <div class="modal-body"> 
+
+          <div class="form-group">
+              <div class="row gutters-xs">
+                  <div class="col-6">
+                      <label for="cliente" class="form-label">Descripción:</label>&nbsp;
+                      <p>{{inv.descripcion}}</p>
+                  </div>
+
+                  <div class="col-6">
+                    <label for="animal" class="form-label">Modelo:</label>&nbsp;
+                    <p>{{inv.modelo}} </p>
+                  </div>
+              </div>  
+          </div>
+          
+          <div class="form-group">
+              <div class="row gutters-xs">
+                  <div class="col-6">
+                      <label for="sexo" class="form-label">Serie:</label>&nbsp;
+                      <p>{{inv.serie}}</p>
+                  </div>
+                  
+                  <div class="col-6">
+                    <label for="fechanac" class="form-label">Localización:</label>&nbsp;
+                    <p>{{inv.localizacion}}</p>
+                  </div>
+              </div>  
+          </div>
+
+          <div class="row gutters-xs">
+            <div class="col-6">
+              <div class="form-group">
+                <label class="especie" class="form-label">Persona Asignada:</label>&nbsp;
+                <p>{{inv.personaAsignacion}}</p>
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="form-group">
+                <label class="raza" class="form-label">Fecha Registro:</label>&nbsp;
+                <p>{{inv.fechaRegistro | fechas}}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="row gutters-xs">
+            <div class="col-6">
+              <div class="form-group">
+                <label class="pelo" class="form-label">Tipo:</label>&nbsp;
+                  <p *ngIf="inv.tipo=='A'"> Asignado a Personal </p>
+                  <p *ngIf="inv.tipo=='P'"> Para préstamos </p>
+                  <p *ngIf="inv.tipo=='O'"> Otros </p>
+              </div>
+            </div>
+            <div class="col-6">
+                <label for="color" class="form-label">Estado:</label>&nbsp;
+                  <p *ngIf="inv.estatus=='D'"> Disponible </p>
+                  <p *ngIf="inv.estatus=='ND'"> No Disponible </p>
+                  <p *ngIf="inv.estatus=='E'"> Extraviado </p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="observaciones" class="form-label">Observaciones:</label>&nbsp;
+            <p>
+              {{inv.observaciones}}
+            </p>
+          </div>
+
+    </div>
+    <div class="modal-footer d-flex">
+        <button type="button" class="btn btn-warning cerrar" (click)="modal.dismiss()">Cerrar</button>
+    </div>
+</ng-template>
+<!--MODAL DETAILS END-->

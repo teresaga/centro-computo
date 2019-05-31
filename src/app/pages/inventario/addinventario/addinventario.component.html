@@ -2,47 +2,73 @@
 <div class="col-lg-12">
     <div class="card">
         <div class="card-header bg-info">
-            <h4 class="m-b-0 text-white">Registrar nuevo equipo</h4>
+            <h4 class="m-b-0 text-white">Registrar nuevo equipo/objeto</h4>
         </div>
         <div class="card-body">
-            <form action="#">
+            <form ngNativeValidate [formGroup]="form" (ngSubmit)="registrar()" >
                 <div class="form-body">
                     <div class="row p-t-20">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label class="control-label">Descripción</label>
-                                <input type="text" id="descripcion" class="form-control">
+                                <label class="control-label">Descripción*</label>
+                                <input formControlName="descripcion" name="descripcion" type="text" id="descripcion" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label">Tipo*</label>
+                                <select formControlName="tipo" name="tipo" class="form-control custom-select" data-placeholder="Seleccionar..." tabindex="-1" required>
+                                    <option value="A">Asignar a Personal</option>
+                                    <option value="P">Para préstamos</option>
+                                    <option value="O">Otros</option>
+                                </select>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label class="control-label">Modelo</label>
-                                <input type="text" id="modelo" class="form-control">
+                                <input formControlName="modelo" name="modelo" type="text" id="modelo" class="form-control">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label class="control-label">Número de Serie</label>
-                                <input type="text" id="serie" class="form-control">
+                                <input formControlName="serie" name="serie" type="text" id="serie" class="form-control">
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6" *ngIf="form.value.tipo=='O'">
                             <div class="form-group">
-                                <label class="control-label">Localización</label>
-                                <input type="text" id="localizacion" class="form-control">
+                                <label class="control-label">Localización*</label>
+                                <input formControlName="localizacion" name="localizacion" type="text" class="form-control">
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6" *ngIf="form.value.tipo=='A'">
                             <div class="form-group">
-                                <label class="control-label">Tipo</label>
-                                <select class="form-control custom-select" data-placeholder="Seleccionar..." tabindex="1">
-                                    <option value="proyector">Proyector</option>
-                                    <option value="hdmi">Cable HDMI</option>
-                                </select>
+                                <label class="control-label">Persona Asignada*</label>
+                                <input formControlName="persona" name="persona" type="text" id="persona" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">Observaciones</label>
+                                <textarea formControlName="observaciones" name="observaciones" rows="5" class="form-control"></textarea>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <div class="form-group" *ngIf="(form.value.persona==null || form.value.persona=='') && form.value.tipo=='A' && !form.pristine">
+                    <p class="text-danger">
+                        Ingresar persona a la cual se le asignará
+                    </p>
+                </div>
+
+                <div class="form-group" *ngIf="(form.value.localizacion==null || form.value.localizacion=='') && form.value.tipo=='O' && !form.pristine">
+                    <p class="text-danger">
+                        Ingresar el lugar en el que se encuentra localizado el equipo ( ej. Centro de cónputo 1, Dirección, Biblioteca, etc. )
+                    </p>
+                </div>
+
                 <div class="form-actions">
                     <button type="submit" class="btn btn-success waves-effect waves-light m-r-10"> <i class="fa fa-check"></i> Guardar</button>
                     <button routerLink="/inventario" type="button" class="btn btn-inverse waves-effect waves-light">Cancelar</button>

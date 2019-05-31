@@ -33,7 +33,7 @@ export class UsuariosComponent implements OnInit {
                           this.totalRegistros = resp.total;
                           this.usuarios = resp.usuarios;
 
-                          if(this.desde >= this.totalRegistros){
+                          if(this.desde >= this.totalRegistros && this.totalRegistros>0){
                             this.desde -= 5;
                             this.cargarUsuarios();
                           }
@@ -78,12 +78,12 @@ export class UsuariosComponent implements OnInit {
   borrarUsuario( usuario: Usuario ){
 
     if ( usuario._id === this._usuarioService.usuario._id ){
-      swal('No puede borrar usuario', 'No se puede borrar a si mismo', 'error');
+      swal('No puede borrar usuario', 'No se puede borrar a sí mismo', 'error');
       return;
     }
 
     swal({
-      title: '¿Estas seguro?',
+      title: '¿Estás seguro?',
       text: 'Estas a punto de borrar a ' + usuario.nombre,
       icon: 'warning',
       dangerMode: true,
